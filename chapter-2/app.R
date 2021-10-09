@@ -10,7 +10,7 @@
 library(shiny)
 
 # k = 1.1-1.4:  Exercises pp. 21-22
-k <- 1.2
+k <- 1.4
 
 if (k == 1.1) {  ## Exercise 1, p. 21
     ui <- fluidPage(
@@ -41,6 +41,47 @@ if (k == 1.2) {  ## Exercise 2, p. 21
             paste0("The delivery is scheduled in ",
                    input$delivery - strptime("2020-09-16", format = "%Y-%m-%d"),
                    " days")
+        })
+    }
+}
+
+if (k == 1.3) {  ## Exercise 3, p. 22
+    ui <- fluidPage(
+        sliderInput("delivery_units", "How many units should we deliver?",
+                    min = 0,
+                    max = 100,
+                    value = 0,
+                    step = 5,
+                    animate = animationOptions(
+                        interval = 100,
+                        loop = TRUE,
+                        playButton = "Start animation",
+                        pauseButton = "Stop animation"
+                    )
+        ),
+        textOutput("announce_units_to_deliver")
+    )
+    
+    server <- function(input, output, session) {
+        output$announce_units_to_deliver <- renderText({
+            paste0("The delivery will have ", input$delivery_units, " units")
+        })
+    }
+}
+
+if (k == 1.4) {  ## Exercise 4, p. 22
+    selection_list <- list()
+    selection_list[[1]] <- c('a', 'b', 'c')
+    selection_list[[2]] <- c('x', 'y', 'z')
+    names(selection_list) <- c("Group 1", "Group N")
+    ui <- fluidPage(
+        selectInput("selection", "What is your selection?", selection_list),
+        textOutput("announce_selection")
+    )
+    
+    server <- function(input, output, session) {
+        output$announce_selection <- renderText({
+            paste0("You have selected ", input$selection)
         })
     }
 }
