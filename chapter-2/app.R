@@ -45,6 +45,5 @@ if (k == 1.2) {  ## Exercise 2, p. 21
     }
 }
 
-
 # Run the application 
 shinyApp(ui, server)
