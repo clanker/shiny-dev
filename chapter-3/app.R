@@ -97,6 +97,5 @@ if (k == 2.1) {  ## Chapter 3, Reactive Expressions
     
 }
 
-
 # Run the application 
 shinyApp(ui = ui, server = server)
