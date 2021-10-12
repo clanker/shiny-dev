@@ -1,0 +1,35 @@
+---
+title: "Chapter 4: EDA"
+author: "Cory Lanker"
+output: html_notebook
+---
+
+Much of the following code is from Wickham's Mastering Shiny, Chapter 4.
+
+```{r setup}
+library(vroom)
+library(tidyverse)
+```
+
+Download data and save in new `neiss` directory:
+```{r load-data}
+dir.create("neiss")
+#> Warning in dir.create("neiss"): 'neiss' already exists
+download <- function(name) {
+  url <- "https://github.com/hadley/mastering-shiny/raw/master/neiss/"
+  download.file(paste0(url, name), paste0("neiss/", name), quiet = TRUE)
+}
+download("injuries.tsv.gz")
+download("population.tsv")
+download("products.tsv")
+```
+
+```{r}
+(injuries <- vroom::vroom("neiss/injuries.tsv.gz"))
+```
+
+```{r}
+(products <- vroom::vroom("neiss/products.tsv"))
+(population <- vroom::vroom("neiss/population.tsv"))
+```
+
