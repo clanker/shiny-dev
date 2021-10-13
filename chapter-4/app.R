@@ -17,16 +17,12 @@ injuries <- vroom::vroom("neiss/injuries.tsv.gz")
 products <- vroom::vroom("neiss/products.tsv")
 population <- vroom::vroom("neiss/population.tsv")
 
-count_top <- function(df, var, n = 5) {
-    df %>%
-        mutate({{ var }} := fct_lump(fct_infreq({{ var }}), n = n)) %>%
-        group_by({{ var }}) %>%
-        summarise(n = as.integer(sum(weight)))
-}
 
 ui <- fluidPage(
     fluidRow(
-        column(8, selectInput("code", "Product", choices = prod_codes)),
+        column(6, selectInput("code", "Product", choices = prod_codes)),
+        column(2, numericInput("list_n", "Number of rows:", min = 5, max = 20,
+               value = 5)),
         column(4, radioButtons("yaxis", "Choose y-axis variable:", 
                                c("n", "rate"), selected = "rate"))
     ),
@@ -46,6 +42,19 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
+    count_top <- function(df, var, n = input$list_n) {
+        df %>%
+            mutate({{ var }} := fct_lump(fct_infreq({{ var }}), n = n)) %>%
+            #        mutate({{ var }} := fct_infreq(fct_lump({{ var }}, n = n))) %>%
+            ## Exercise 2.:
+            # if fct_lump first, then the Other groups (all > 5)
+            #   are treated as its own group and placed in the ranking
+            # if fct_infreq first, the Other group will be last, 
+            #   no matter its count
+            group_by({{ var }}) %>%
+            summarise(n = as.integer(sum(weight)))
+    }
+    
     selected <- reactive(injuries %>% filter(prod_code == input$code))
     
     output$diag <- renderTable(count_top(selected(), diag), width = "100%")
