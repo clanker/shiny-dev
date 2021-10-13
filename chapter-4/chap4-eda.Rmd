@@ -33,3 +33,36 @@ download("products.tsv")
 (population <- vroom::vroom("neiss/population.tsv"))
 ```
 
+## Exploration
+```{r}
+selected <- injuries %>% filter(prod_code == 649)
+nrow(selected)
+
+(selected %>% count(location, wt = weight, sort = TRUE))
+(selected %>% count(body_part, wt = weight, sort = TRUE))
+(selected %>% count(diag, wt = weight, sort = TRUE))
+```
+
+```{r}
+(summary <- selected %>% 
+  count(age, sex, wt = weight))
+summary %>% 
+  ggplot(aes(age, n, colour = sex)) + 
+  geom_line() + 
+  stat_smooth() +
+  labs(y = "Estimated number of injuries")
+```
+
+Same plot but now based on per 10k
+```{r}
+(summary <- selected %>% 
+  count(age, sex, wt = weight) %>% 
+  left_join(population, by = c("age", "sex")) %>% 
+  mutate(rate = n / population * 1e4))
+summary %>% 
+  ggplot(aes(age, rate, color = sex)) + 
+  geom_line() + 
+  stat_smooth() +
+  labs(y = "Estimated number of injuries per 10k")
+```
+
